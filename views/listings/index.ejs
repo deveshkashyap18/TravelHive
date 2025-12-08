@@ -1,0 +1,234 @@
+<% layout("/layouts/boilerplate") %>
+
+<body>
+    <style>
+        #filters{
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter{
+            text-align: center;
+            margin-right: 2rem;
+            margin-top: 1rem;
+            opacity: 0.7;
+        }
+
+        .filter:hover{
+            opacity: 1;
+            cursor: pointer;
+        }
+
+        .filter p{
+            font-size: 0.9rem;
+        }
+
+        .tax-info{
+            display: none;
+        }
+
+        .tax-toggle{
+            border: 1px solid black;
+            border-radius: 1rem;
+            height: 3.25 rem;
+            padding: 1rem;
+            margin-left: 2rem;
+            display: flex;
+            align-items: center;
+        }
+        .price-wrap { 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 0.5rem; 
+        }
+
+        .total-price { 
+            font-weight: 700; 
+            color: #111; 
+            display: none; 
+        }
+
+        .base-price { 
+            font-weight: 700; 
+            color: #111; 
+        }
+
+        .tax-info { 
+            color: #666; 
+            font-size: 0.9rem; 
+            display: none; 
+        }
+    
+    </style>
+
+    <div id="filters">
+        <div class="filter" data-category="trending">
+            <div><i class="fa-solid fa-fire"></i></div>
+            <p>Trending</p>
+        </div>
+
+        <div class="filter" data-category="rooms">
+            <div><i class="fa-solid fa-bed"></i></div>
+            <p>Rooms</p>    
+        </div>
+
+        <div class="filter" data-category="iconic-cities">
+            <div><i class="fa-solid fa-mountain-city"></i></div>
+            <p>Iconic Cities</p>
+        </div>
+
+        <div class="filter" data-category="mountains">
+            <div><i class="fa-solid fa-mountain"></i></div>
+            <p>Mountains</p>
+        </div>
+
+        <div class="filter" data-category="castle">
+            <div><i class="fa-solid fa-chess-rook"></i></div>
+            <p>Castles</p>
+        </div>
+
+        <div class="filter" data-category="amazing-pools">
+            <div><i class="fa-solid fa-person-swimming"></i></div>
+            <p>Amazing Pools</p>
+        </div>
+
+        <div class="filter" data-category="camping">
+            <div><i class="fa-solid fa-campground"></i></div>
+            <p>Camping</p>
+        </div>
+
+        <div class="filter" data-category="farms">
+            <div><i class="fa-solid fa-cow"></i></div>
+            <p>Farms</p>
+        </div>
+
+        <div class="filter" data-category="arctic">
+            <div><i class="fa-solid fa-snowflake"></i></div>
+            <p>Arctic</p>
+        </div>
+
+        <div class="filter" data-category="domes">
+            <div><i class="fa-solid fa-igloo"></i></div>
+            <p>Domes</p>
+        </div>
+
+        <div class="filter" data-category="boats">
+            <div><i class="fa-solid fa-ship"></i></div>
+            <p>Boats</p>
+        </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', ()=> {
+        document.querySelectorAll(".filter").forEach(f => {
+            f.addEventListener("click", () => {
+            const category = f.getAttribute("data-category");
+            const params = new URLSearchParams(window.location.search);
+            const q = params.get("q");
+            let url = "/listings?category=" + encodeURIComponent(category);
+            if (q) url += "&q=" + encodeURIComponent(q);
+            window.location.href = url;
+            });
+        });
+        });
+    </script>
+
+
+    <div class="tax-toggle">
+        <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" role="switch" id="switchCheckDefault">
+        <label class="form-check-label" for="switchCheckDefault">Display Total After Tax</label>
+        </div>
+        </div>
+    </div>
+
+    <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 mt-3">
+    <% if (allListings && allListings.length > 0) { %>
+    <% for (let listing of allListings) { %>
+    <a href="/listings/<%= listing._id %>" class="listing-link">    
+        <div class="card col listing-card">
+            <img src="<%= listing.image.url %>" class="card-img-top" alt="listing_image" style="height: 20rem">
+            <div class="card-img-overlay"></div>
+            <div class="card-body">
+                <p class="card-text">
+                    <b><%= listing.title %></b> <br>
+                    <span class="price-wrap">
+                    <span class="base-price" data-price="<%= listing.price %>">
+                    ₹<%= listing.price.toLocaleString("en-IN") %>
+                    </span>
+                    <span class="total-price" style="display:none;"></span>
+                    <span class="tax-info">&nbsp;+18% GST</span>/Night
+                    </span><br>
+                    <%= listing.location %>
+                </p>
+            </div>
+        </div>
+    </a>
+    <% } %>
+
+    <% } else { %>
+
+    <div class="col-12 text-center my-5">
+        <h4>No results found<% if (q) { %> for "<%= q %>"<% } %></h4>
+        <p>Try another location or <a href="/listings">view all listings</a>.</p>
+    </div>
+
+    <% } %>
+
+    </div>
+    
+    <!-- <ul>
+    <% for(let listing of allListings){ %> 
+       <li><a href="/listings/<%= listing._id %>"><%= listing.title %></a></li>
+    <% } %>
+    </ul> -->
+
+</body>
+
+<script>
+    (function(){
+    const TAX_RATE = 0.18; // 18% GST
+    const taxSwitch = document.getElementById("switchCheckDefault");
+
+    const formatINR = (num) => {
+        try {
+        return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(Math.round(num));
+        } catch (e) {
+        return '₹' + Math.round(num).toLocaleString('en-IN');
+        }
+    };
+
+    function applyTaxDisplay(showTaxed) {
+        document.querySelectorAll('.card.listing-card').forEach(card => {
+        const baseSpan = card.querySelector('.base-price');
+        const totalSpan = card.querySelector('.total-price');
+        const taxInfo = card.querySelector('.tax-info');
+
+        if (!baseSpan || !totalSpan) return;
+        const priceNum = Number(baseSpan.getAttribute('data-price') || baseSpan.textContent.replace(/[^0-9.-]+/g,""));
+
+        if (showTaxed) {
+            const taxed = priceNum * (1 + TAX_RATE);
+            // show base price AND a formatted total after tax
+            baseSpan.style.display = 'inline';
+            totalSpan.textContent = ' +18% GST = ' + formatINR(taxed);
+            totalSpan.style.display = 'inline';
+            // hide the separate tax-info span (we show +18% inside totalSpan)
+            if (taxInfo) taxInfo.style.display = 'none';
+        } else {
+            // show only base price
+            totalSpan.style.display = 'none';
+            baseSpan.style.display = 'inline';
+            if (taxInfo) taxInfo.style.display = 'none';
+        }
+        });
+    }
+        // safe attach
+        if (taxSwitch) {
+            applyTaxDisplay(taxSwitch.checked);
+            taxSwitch.addEventListener('change', ()=> applyTaxDisplay(taxSwitch.checked));
+        } else {
+            applyTaxDisplay(false);
+        }
+    })();
+</script>
