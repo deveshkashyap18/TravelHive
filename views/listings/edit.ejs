@@ -26,6 +26,24 @@
             <input type="file" name="listing[image]" class="form-control"/>
         </div>
 
+    <div class="mb-3">
+    <label for="category" class="form-label">Category</label>
+    <select name="listing[category]" id="category" class="form-select" required>
+        <option value="trending">Trending</option>
+        <option value="rooms">Rooms</option>
+        <option value="icities">Iconic Cities</option>
+        <option value="mountains">Mountains</option>
+        <option value="castle">Castles</option>
+        <option value="pools">Amazing Pools</option>
+        <option value="camping">Camping</option>
+        <option value="farms">Farms</option>
+        <option value="arctic">Arctic</option>
+        <option value="domes">Domes</option>
+        <option value="boat">Boats</option>
+    </select>
+    </div>
+
+
         <div class="row">
             <div class="mb-3 col-md-4">
             <label for="price" class="form-label">Price</label>
@@ -38,6 +56,7 @@
             <div class="invalid-feedback">Enter a Valid Location</div>
             </div>
         </div>
+
         
         <div class="mb-3">
             <label for="country" class="form-label">Country</label>
