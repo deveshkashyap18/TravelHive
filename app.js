@@ -57,7 +57,7 @@ store.on("error", ()=>{
 })
 
 const sessionOptions={
-    // store,
+    // store: store,
     secret: process.env.SECRET,
     resave: false,
     saveUninitialized: true,
@@ -79,14 +79,17 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+
+
 //Flash Msgs
 app.use((req,res,next)=>{  //Middleware
     res.locals.success=req.flash("success");
     res.locals.error=req.flash("error");
     // console.log(res.locals.success);
-    res.locals.currUser=req.user;
+    res.locals.currUser = req.user || null;
     next();
 })
+
 
 //Index Routes
 app.use("/listings", listingRouter);
