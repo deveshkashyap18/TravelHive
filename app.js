@@ -46,7 +46,7 @@ app.use(express.static(path.join(__dirname,"/public")));  // Use for Static file
 
 const store = MongoStore.create({
     mongoUrl : dbUrl,
-    crypto : {
+    crypto : { 
         secret: process.env.SECRET,
     },
     touchAfter: 24 * 3600,
